@@ -66,6 +66,33 @@ export function useTheme() {
   return context;
 }
 
+// ----------------- Mobile Menu Provider -----------------
+type MobileMenuContextType = {
+  isMobileMenuOpen: boolean;
+  setMobileMenuOpen: (open: boolean) => void;
+};
+
+const MobileMenuContext = createContext<MobileMenuContextType | undefined>(undefined);
+
+export function MobileMenuProvider({ children }: { children: React.ReactNode }) {
+  const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
+  
+  return (
+    <MobileMenuContext.Provider value={{ isMobileMenuOpen, setMobileMenuOpen }}>
+      {children}
+    </MobileMenuContext.Provider>
+  );
+}
+
+export function useMobileMenu() {
+  const context = useContext(MobileMenuContext);
+  if (!context) {
+    throw new Error("useMobileMenu must be used within a MobileMenuProvider");
+  }
+  return context;
+}
+
+
 // ----------------- Custom Toast Provider -----------------
 type ToastType = "success" | "error" | "info";
 type Toast = {
@@ -155,7 +182,9 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
-        <ToastProvider>{children}</ToastProvider>
+        <MobileMenuProvider>
+          <ToastProvider>{children}</ToastProvider>
+        </MobileMenuProvider>
       </ThemeProvider>
     </QueryClientProvider>
   );

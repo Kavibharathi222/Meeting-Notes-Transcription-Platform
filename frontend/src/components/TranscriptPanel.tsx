@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Search, Download, MessageSquare, Highlighter, Send, X } from "lucide-react";
 import { useToast } from "./Providers";
+import API_BASE from "@/lib/api";
 
 interface Comment {
   id: number;
@@ -46,7 +47,7 @@ export default function TranscriptPanel({
 }: TranscriptPanelProps) {
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState("");
-  
+
   // Comment & Highlight panel states
   const [activeCommentBox, setActiveCommentBox] = useState<number | null>(null);
   const [commentText, setCommentText] = useState("");
@@ -101,7 +102,7 @@ export default function TranscriptPanel({
       const body = segments
         .map((s) => `**${s.speaker}** _(${formatTime(s.timestamp)})_\n${s.content}\n`)
         .join("\n");
-      
+
       const blob = new Blob([header + body], { type: "text/markdown;charset=utf-8;" });
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
@@ -110,7 +111,7 @@ export default function TranscriptPanel({
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      
+
       toast("Transcript exported successfully", "success");
     } catch {
       toast("Failed to export transcript", "error");
@@ -122,7 +123,7 @@ export default function TranscriptPanel({
     if (!commentText.trim()) return;
 
     try {
-      const res = await fetch(`http://localhost:8000/api/meetings/${meetingId}/comments`, {
+      const res = await fetch(`${API_BASE}/api/meetings/${meetingId}/comments`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -133,7 +134,7 @@ export default function TranscriptPanel({
       });
 
       if (!res.ok) throw new Error();
-      
+
       setCommentText("");
       setActiveCommentBox(null);
       onRefreshMeeting();
@@ -146,7 +147,7 @@ export default function TranscriptPanel({
   // Toggle Highlight API call
   const handleToggleHighlight = async (segmentId: number, color: string) => {
     try {
-      await fetch(`http://localhost:8000/api/meetings/${meetingId}/highlights`, {
+      await fetch(`${API_BASE}/api/meetings/${meetingId}/highlights`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -193,7 +194,7 @@ export default function TranscriptPanel({
   const getHighlightClass = (segmentId: number) => {
     const hl = highlights.find((h) => h.segment_id === segmentId);
     if (!hl) return "";
-    
+
     switch (hl.color) {
       case "yellow":
         return "bg-yellow-500/10 border-l-2 border-yellow-500";
@@ -232,7 +233,7 @@ export default function TranscriptPanel({
 
   return (
     <div className="flex-1 flex flex-col h-full bg-card border border-border rounded-xl shadow-sm overflow-hidden transition-colors">
-      
+
       {/* Panel Toolbar Header */}
       <div className="px-6 py-4 border-b border-border flex items-center justify-between flex-shrink-0 bg-muted-bg/10">
         <h3 className="font-bold text-base flex items-center gap-2">
@@ -241,7 +242,7 @@ export default function TranscriptPanel({
             {segments.length} segments
           </span>
         </h3>
-        
+
         <div className="flex items-center gap-2">
           {/* Search Transcript */}
           <div className="relative">
@@ -305,11 +306,10 @@ export default function TranscriptPanel({
                   if (el) segmentRefs.current.set(s.id, el);
                   else segmentRefs.current.delete(s.id);
                 }}
-                className={`group/item relative flex gap-4 p-4 rounded-xl border transition-all duration-200 ${
-                  isActive 
-                    ? "bg-primary/5 dark:bg-primary/10 border border-primary/20 border-l-4 border-l-primary" 
+                className={`group/item relative flex gap-4 p-4 rounded-xl border transition-all duration-200 ${isActive
+                    ? "bg-primary/5 dark:bg-primary/10 border border-primary/20 border-l-4 border-l-primary"
                     : "border-transparent hover:bg-muted-bg/20 hover:border-border"
-                } ${isHighlighted}`}
+                  } ${isHighlighted}`}
               >
                 {/* Speaker Avatar Bubble */}
                 <div className="flex-shrink-0">
@@ -338,120 +338,116 @@ export default function TranscriptPanel({
                       </button>
                     </div>
 
-                  {/* Inline annotations toolbar (Visible on hover) */}
-                  <div className="opacity-0 group-hover/item:opacity-100 flex items-center gap-1.5 transition-all">
-                    {/* Highlight icon */}
-                    <button
-                      onClick={() => setActiveHighlightPicker(activeHighlightPicker === s.id ? null : s.id)}
-                      className={`p-1 rounded text-muted hover:text-primary hover:bg-muted-bg transition-colors ${
-                        segmentHighlight ? "text-primary bg-primary/10" : ""
-                      }`}
-                      title="Highlight Segment"
-                    >
-                      <Highlighter className="w-3.5 h-3.5" />
-                    </button>
-
-                    {/* Comment icon */}
-                    <button
-                      onClick={() => {
-                        setActiveCommentBox(activeCommentBox === s.id ? null : s.id);
-                        setCommentText("");
-                      }}
-                      className="p-1 rounded text-muted hover:text-primary hover:bg-muted-bg transition-colors"
-                      title="Add Comment"
-                    >
-                      <MessageSquare className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                </div>
-
-                {/* Content Text */}
-                <p
-                  onClick={() => handleSegmentClick(s.timestamp)}
-                  className={`text-sm leading-relaxed cursor-pointer font-light transition-colors ${
-                    isActive ? "text-foreground font-normal" : "text-muted hover:text-foreground"
-                  }`}
-                >
-                  {renderHighlightedContent(s.content, searchTerm)}
-                </p>
-
-                {/* Multi-color Highlight Picker Overlay */}
-                {activeHighlightPicker === s.id && (
-                  <div className="absolute right-6 top-6 bg-card border border-border rounded-lg shadow-xl p-2 flex gap-1.5 z-10 animate-in fade-in zoom-in-95 duration-100">
-                    {["yellow", "blue", "green", "pink"].map((color) => (
+                    {/* Inline annotations toolbar (Visible on hover) */}
+                    <div className="opacity-0 group-hover/item:opacity-100 flex items-center gap-1.5 transition-all">
+                      {/* Highlight icon */}
                       <button
-                        key={color}
-                        onClick={() => handleToggleHighlight(s.id, color)}
-                        className={`w-5 h-5 rounded-full ring-offset-2 hover:scale-110 transition-transform ${
-                          color === "yellow"
-                            ? "bg-yellow-400"
-                            : color === "blue"
-                            ? "bg-blue-400"
-                            : color === "green"
-                            ? "bg-emerald-400"
-                            : "bg-rose-400"
-                        } ${
-                          segmentHighlight?.color === color
-                            ? "ring-2 ring-primary"
-                            : ""
-                        }`}
-                      />
-                    ))}
-                    {segmentHighlight && (
-                      <button
-                        onClick={() => handleToggleHighlight(s.id, segmentHighlight.color)}
-                        className="text-[10px] text-rose-500 font-semibold px-1 py-0.5 rounded hover:bg-rose-500/10 ml-1 transition-colors"
+                        onClick={() => setActiveHighlightPicker(activeHighlightPicker === s.id ? null : s.id)}
+                        className={`p-1 rounded text-muted hover:text-primary hover:bg-muted-bg transition-colors ${segmentHighlight ? "text-primary bg-primary/10" : ""
+                          }`}
+                        title="Highlight Segment"
                       >
-                        Remove
+                        <Highlighter className="w-3.5 h-3.5" />
                       </button>
-                    )}
-                  </div>
-                )}
 
-                {/* Inline Comments list */}
-                {segmentComments.length > 0 && (
-                  <div className="mt-3 pl-3 border-l-2 border-primary/20 space-y-2">
-                    {segmentComments.map((c) => (
-                      <div key={c.id} className="text-xs bg-muted-bg/25 border border-border/40 p-2.5 rounded-lg">
-                        <div className="flex justify-between items-center mb-1 text-muted">
-                          <span className="font-semibold text-primary">{c.author}</span>
-                          <span className="text-[9px]">{new Date(c.created_at).toLocaleDateString()}</span>
+                      {/* Comment icon */}
+                      <button
+                        onClick={() => {
+                          setActiveCommentBox(activeCommentBox === s.id ? null : s.id);
+                          setCommentText("");
+                        }}
+                        className="p-1 rounded text-muted hover:text-primary hover:bg-muted-bg transition-colors"
+                        title="Add Comment"
+                      >
+                        <MessageSquare className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Content Text */}
+                  <p
+                    onClick={() => handleSegmentClick(s.timestamp)}
+                    className={`text-sm leading-relaxed cursor-pointer font-light transition-colors ${isActive ? "text-foreground font-normal" : "text-muted hover:text-foreground"
+                      }`}
+                  >
+                    {renderHighlightedContent(s.content, searchTerm)}
+                  </p>
+
+                  {/* Multi-color Highlight Picker Overlay */}
+                  {activeHighlightPicker === s.id && (
+                    <div className="absolute right-6 top-6 bg-card border border-border rounded-lg shadow-xl p-2 flex gap-1.5 z-10 animate-in fade-in zoom-in-95 duration-100">
+                      {["yellow", "blue", "green", "pink"].map((color) => (
+                        <button
+                          key={color}
+                          onClick={() => handleToggleHighlight(s.id, color)}
+                          className={`w-5 h-5 rounded-full ring-offset-2 hover:scale-110 transition-transform ${color === "yellow"
+                              ? "bg-yellow-400"
+                              : color === "blue"
+                                ? "bg-blue-400"
+                                : color === "green"
+                                  ? "bg-emerald-400"
+                                  : "bg-rose-400"
+                            } ${segmentHighlight?.color === color
+                              ? "ring-2 ring-primary"
+                              : ""
+                            }`}
+                        />
+                      ))}
+                      {segmentHighlight && (
+                        <button
+                          onClick={() => handleToggleHighlight(s.id, segmentHighlight.color)}
+                          className="text-[10px] text-rose-500 font-semibold px-1 py-0.5 rounded hover:bg-rose-500/10 ml-1 transition-colors"
+                        >
+                          Remove
+                        </button>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Inline Comments list */}
+                  {segmentComments.length > 0 && (
+                    <div className="mt-3 pl-3 border-l-2 border-primary/20 space-y-2">
+                      {segmentComments.map((c) => (
+                        <div key={c.id} className="text-xs bg-muted-bg/25 border border-border/40 p-2.5 rounded-lg">
+                          <div className="flex justify-between items-center mb-1 text-muted">
+                            <span className="font-semibold text-primary">{c.author}</span>
+                            <span className="text-[9px]">{new Date(c.created_at).toLocaleDateString()}</span>
+                          </div>
+                          <p className="text-foreground leading-normal font-light italic">
+                            &ldquo;{c.text}&rdquo;
+                          </p>
                         </div>
-                        <p className="text-foreground leading-normal font-light italic">
-                          &ldquo;{c.text}&rdquo;
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                      ))}
+                    </div>
+                  )}
 
-                {/* Inline Add Comment Input box */}
-                {activeCommentBox === s.id && (
-                  <div className="mt-3 flex gap-2 animate-in slide-in-from-top-1 duration-150">
-                    <input
-                      type="text"
-                      placeholder="Add a comment..."
-                      value={commentText}
-                      onChange={(e) => setCommentText(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") handleAddComment(s.id);
-                      }}
-                      className="flex-1 px-3 py-1.5 bg-muted-bg text-xs rounded-lg border border-transparent focus:border-primary focus:outline-none text-foreground"
-                    />
-                    <button
-                      onClick={() => handleAddComment(s.id)}
-                      className="px-2.5 bg-primary hover:bg-primary-hover text-white rounded-lg flex items-center justify-center transition-colors"
-                    >
-                      <Send className="w-3 h-3" />
-                    </button>
-                    <button
-                      onClick={() => setActiveCommentBox(null)}
-                      className="p-1.5 hover:bg-muted-bg rounded-lg border border-transparent text-muted hover:text-foreground"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
-                  </div>
-                )}
+                  {/* Inline Add Comment Input box */}
+                  {activeCommentBox === s.id && (
+                    <div className="mt-3 flex gap-2 animate-in slide-in-from-top-1 duration-150">
+                      <input
+                        type="text"
+                        placeholder="Add a comment..."
+                        value={commentText}
+                        onChange={(e) => setCommentText(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") handleAddComment(s.id);
+                        }}
+                        className="flex-1 px-3 py-1.5 bg-muted-bg text-xs rounded-lg border border-transparent focus:border-primary focus:outline-none text-foreground"
+                      />
+                      <button
+                        onClick={() => handleAddComment(s.id)}
+                        className="px-2.5 bg-primary hover:bg-primary-hover text-white rounded-lg flex items-center justify-center transition-colors"
+                      >
+                        <Send className="w-3 h-3" />
+                      </button>
+                      <button
+                        onClick={() => setActiveCommentBox(null)}
+                        className="p-1.5 hover:bg-muted-bg rounded-lg border border-transparent text-muted hover:text-foreground"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             );

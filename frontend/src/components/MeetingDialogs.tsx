@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { X, Calendar, Clock, Users, Plus, Trash2 } from "lucide-react";
 import { useToast } from "./Providers";
+import API_BASE from "@/lib/api";
 
 interface MeetingDialogProps {
   isOpen: boolean;
@@ -37,7 +38,7 @@ export default function MeetingDialogs({
   useEffect(() => {
     if (isOpen && mode === "edit" && meetingId) {
       Promise.resolve().then(() => setLoading(true));
-      fetch(`http://localhost:8000/api/meetings/${meetingId}`)
+      fetch(`${API_BASE}/api/meetings/${meetingId}`)
         .then((res) => {
           if (!res.ok) throw new Error();
           return res.json();
@@ -104,7 +105,7 @@ export default function MeetingDialogs({
           transcript_raw: transcriptRaw || null,
         };
 
-        const res = await fetch("http://localhost:8000/api/meetings", {
+        const res = await fetch(`${API_BASE}/api/meetings`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
@@ -120,7 +121,7 @@ export default function MeetingDialogs({
           participants,
         };
 
-        const res = await fetch(`http://localhost:8000/api/meetings/${meetingId}`, {
+        const res = await fetch(`${API_BASE}/api/meetings/${meetingId}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
@@ -129,7 +130,7 @@ export default function MeetingDialogs({
         if (!res.ok) throw new Error();
         toast("Meeting updated successfully", "success");
       } else if (mode === "delete" && meetingId) {
-        const res = await fetch(`http://localhost:8000/api/meetings/${meetingId}`, {
+        const res = await fetch(`${API_BASE}/api/meetings/${meetingId}`, {
           method: "DELETE",
         });
 

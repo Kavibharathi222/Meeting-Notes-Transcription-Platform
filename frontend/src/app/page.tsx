@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Navbar from "@/components/Navbar";
 import MeetingDialogs from "@/components/MeetingDialogs";
+import API_BASE from "@/lib/api";
 import { 
   Calendar, 
   Clock, 
@@ -47,7 +48,7 @@ export default function Dashboard() {
       if (dateFilter) params.append("date", dateFilter);
       params.append("sort", sortBy);
       
-      const res = await fetch(`http://localhost:8000/api/meetings?${params.toString()}`);
+      const res = await fetch(`${API_BASE}/api/meetings?${params.toString()}`);
       if (!res.ok) throw new Error("Network response was not ok");
       return res.json();
     }
@@ -109,7 +110,7 @@ export default function Dashboard() {
       <Navbar onAddMeeting={openCreateDialog} />
 
       {/* Main Dashboard Content */}
-      <main className="flex-1 overflow-y-auto px-8 py-6 space-y-6">
+      <main className="flex-1 overflow-y-auto px-4 md:px-8 py-4 md:py-6 space-y-6">
         
         {/* Header Block */}
         <div className="flex items-center justify-between">
@@ -121,19 +122,19 @@ export default function Dashboard() {
           </div>
           <button
             onClick={openCreateDialog}
-            className="ff-btn flex items-center gap-2 px-5 py-2.5 text-sm font-bold rounded-full cursor-pointer"
+            className="ff-btn flex items-center gap-1.5 px-3 md:px-5 py-2.5 text-sm font-bold rounded-full cursor-pointer"
           >
-            <Plus className="w-4 h-4" />
-            <span>Create Meeting</span>
+            <Plus className="w-4 h-4 md:w-4 md:h-4" />
+            <span className="hidden sm:inline">Create Meeting</span>
           </button>
         </div>
 
         {/* Filter Controls Bar */}
         <div className="rounded-2xl p-4 flex flex-wrap gap-4 items-center justify-between transition-all"
           style={{ background: "var(--card)", border: "1px solid var(--border)", boxShadow: "var(--shadow-sm)" }}>
-          <div className="flex flex-wrap gap-3 items-center flex-1">
+          <div className="flex flex-wrap gap-3 items-center w-full md:w-auto flex-1">
             {/* Search Input */}
-            <div className="relative max-w-xs w-full">
+            <div className="relative w-full sm:max-w-xs">
               <Search className="absolute left-3 top-2.5 h-4 w-4" style={{ color: "var(--muted)" }} />
               <input
                 type="text"
@@ -146,7 +147,7 @@ export default function Dashboard() {
             </div>
 
             {/* Filter by Participant */}
-            <div className="relative max-w-[200px] w-full">
+            <div className="relative w-full sm:max-w-[200px]">
               <Users className="absolute left-3 top-2.5 h-4 w-4" style={{ color: "var(--muted)" }} />
               <input
                 type="text"
@@ -159,7 +160,7 @@ export default function Dashboard() {
             </div>
 
             {/* Filter by Date */}
-            <div className="relative max-w-[170px] w-full">
+            <div className="relative w-full sm:max-w-[170px]">
               <Calendar className="absolute left-3 top-2.5 h-4 w-4" style={{ color: "var(--muted)" }} />
               <input
                 type="date"

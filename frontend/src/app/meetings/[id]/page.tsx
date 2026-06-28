@@ -4,6 +4,7 @@ import React, { useState, useEffect, use } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import API_BASE from "@/lib/api";
 import { 
   ArrowLeft, 
   Sparkles, 
@@ -113,7 +114,7 @@ export default function MeetingDetailPage({ params }: { params: Promise<{ id: st
   const { data: meeting, isLoading, error, refetch } = useQuery<MeetingDetailData>({
     queryKey: ["meeting", meetingId],
     queryFn: async () => {
-      const res = await fetch(`http://localhost:8000/api/meetings/${meetingId}`);
+      const res = await fetch(`${API_BASE}/api/meetings/${meetingId}`);
       if (!res.ok) throw new Error("Failed to fetch meeting");
       return res.json();
     }
@@ -211,7 +212,7 @@ export default function MeetingDetailPage({ params }: { params: Promise<{ id: st
   // Create Action Item
   const createActionMutation = useMutation({
     mutationFn: async (task: string) => {
-      const res = await fetch("http://localhost:8000/api/action-items", {
+      const res = await fetch(`${API_BASE}/api/action-items`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ meeting_id: meetingId, task }),
@@ -230,7 +231,7 @@ export default function MeetingDetailPage({ params }: { params: Promise<{ id: st
   // Update Action Item Status/Text
   const updateActionMutation = useMutation({
     mutationFn: async ({ id, task, completed }: { id: number; task?: string; completed?: boolean }) => {
-      const res = await fetch(`http://localhost:8000/api/action-items/${id}`, {
+      const res = await fetch(`${API_BASE}/api/action-items/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ task, completed }),
@@ -248,7 +249,7 @@ export default function MeetingDetailPage({ params }: { params: Promise<{ id: st
   // Delete Action Item
   const deleteActionMutation = useMutation({
     mutationFn: async (id: number) => {
-      const res = await fetch(`http://localhost:8000/api/action-items/${id}`, {
+      const res = await fetch(`${API_BASE}/api/action-items/${id}`, {
         method: "DELETE",
       });
       if (!res.ok) throw new Error();
@@ -452,10 +453,10 @@ export default function MeetingDetailPage({ params }: { params: Promise<{ id: st
       </div>
 
       {/* Main Splits Area */}
-      <div className="flex-1 flex h-full overflow-hidden">
+      <div className="flex-1 flex flex-col lg:flex-row h-full overflow-auto lg:overflow-hidden">
         
         {/* Left Side: Media Player & Transcript (65% width) */}
-        <div className="w-[65%] border-r border-border p-6 flex flex-col gap-5 h-full overflow-hidden bg-background">
+        <div className="w-full lg:w-[65%] border-b lg:border-b-0 lg:border-r border-border p-4 lg:p-6 flex flex-col gap-5 h-[65vh] lg:h-full overflow-hidden bg-background flex-shrink-0">
           {/* Media Player block */}
           <AudioPlayer
             audioUrl="/sample.mp3"
@@ -482,7 +483,7 @@ export default function MeetingDetailPage({ params }: { params: Promise<{ id: st
         </div>
 
         {/* Right Side: Tab Panel (35% width) */}
-        <div className="w-[35%] flex flex-col h-full bg-card overflow-hidden border-l border-border transition-colors">
+        <div className="w-full lg:w-[35%] flex flex-col h-[65vh] lg:h-full bg-card overflow-hidden lg:border-l border-border transition-colors flex-shrink-0">
           {/* Tabs header selector */}
           <div className="flex border border-border bg-muted-bg/30 p-1 m-4 rounded-lg flex-shrink-0">
             {[

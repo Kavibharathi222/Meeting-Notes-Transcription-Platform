@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useTheme, useToast } from "./Providers";
+import { useTheme, useToast, useMobileMenu } from "./Providers";
 import { 
   BarChart2, 
   Settings, 
@@ -13,13 +13,15 @@ import {
   Folder,
   Search,
   Sparkles,
-  Zap
+  Zap,
+  X
 } from "lucide-react";
 
 export default function Sidebar() {
   const pathname = usePathname();
   const { theme, toggleTheme } = useTheme();
   const { toast } = useToast();
+  const { isMobileMenuOpen, setMobileMenuOpen } = useMobileMenu();
 
   const navItems = [
     { name: "Meetings", href: "/", icon: Folder, active: pathname === "/" || pathname.startsWith("/meetings") },
@@ -30,27 +32,48 @@ export default function Sidebar() {
   ];
 
   return (
-    <aside
-      className="w-[260px] flex flex-col h-screen flex-shrink-0 sticky top-0 transition-all duration-300 ff-sidebar"
-    >
-      {/* ── Brand Logo ─────────────────────────────── */}
-      <div className="px-5 py-5 flex items-center gap-3" style={{ borderBottom: "1px solid var(--border)" }}>
-        {/* Fireflies logo grid icon (2×2 squares with brand gradient) */}
-        <div className="relative w-9 h-9 flex-shrink-0 animate-pulse-glow rounded-lg overflow-hidden">
-          <div className="absolute inset-0 ff-gradient-bg rounded-lg" />
-          <div className="absolute inset-0 flex items-center justify-center">
-            <Zap className="w-5 h-5 text-white" strokeWidth={2.5} />
+    <>
+      {/* Mobile Backdrop overlay */}
+      {isMobileMenuOpen && (
+        <div 
+          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm md:hidden"
+          onClick={() => setMobileMenuOpen(false)}
+        />
+      )}
+
+      <aside
+        className={`fixed md:relative inset-y-0 left-0 z-50 w-[260px] flex flex-col h-screen flex-shrink-0 transition-transform duration-300 ff-sidebar bg-background ${
+          isMobileMenuOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full md:translate-x-0"
+        }`}
+      >
+        {/* ── Brand Logo ─────────────────────────────── */}
+        <div className="px-5 py-5 flex items-center justify-between gap-3" style={{ borderBottom: "1px solid var(--border)" }}>
+          <div className="flex items-center gap-3">
+            {/* Fireflies logo grid icon */}
+            <div className="relative w-9 h-9 flex-shrink-0 animate-pulse-glow rounded-lg overflow-hidden">
+              <div className="absolute inset-0 ff-gradient-bg rounded-lg" />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <Zap className="w-5 h-5 text-white" strokeWidth={2.5} />
+              </div>
+            </div>
+            <div>
+              <span className="font-extrabold text-base tracking-tight block ff-gradient-text">
+                fireflies.ai
+              </span>
+              <span className="text-[11px] font-medium" style={{ color: "var(--muted)" }}>
+                Workspace Clone
+              </span>
+            </div>
           </div>
+          
+          {/* Mobile Close button */}
+          <button 
+            className="md:hidden p-1.5 text-muted hover:text-foreground rounded-lg bg-muted-bg"
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            <X className="w-4 h-4" />
+          </button>
         </div>
-        <div>
-          <span className="font-extrabold text-base tracking-tight block ff-gradient-text">
-            fireflies.ai
-          </span>
-          <span className="text-[11px] font-medium" style={{ color: "var(--muted)" }}>
-            Workspace Clone
-          </span>
-        </div>
-      </div>
 
       {/* ── Main Navigation ─────────────────────────── */}
       <nav className="flex px-3 py-5 space-y-0.5 overflow-y-auto flex-col">
@@ -173,5 +196,6 @@ export default function Sidebar() {
         </div>
       </div>
     </aside>
+    </>
   );
 }

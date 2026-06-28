@@ -1,8 +1,10 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { Search, Bell, Plus, Video, MessageSquare, CheckSquare, Clock } from "lucide-react";
+import { Search, Bell, Plus, Video, MessageSquare, CheckSquare, Clock, Menu } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useMobileMenu } from "./Providers";
+import API_BASE from "@/lib/api";
 
 interface SearchResultMeeting {
   id: number;
@@ -27,6 +29,7 @@ interface SearchResultActionItem {
 
 export default function Navbar({ onAddMeeting }: { onAddMeeting?: () => void }) {
   const router = useRouter();
+  const { setMobileMenuOpen } = useMobileMenu();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<{
     meetings: SearchResultMeeting[];
@@ -50,7 +53,7 @@ export default function Navbar({ onAddMeeting }: { onAddMeeting?: () => void }) 
     const timer = setTimeout(async () => {
       setLoading(true);
       try {
-        const res = await fetch(`http://localhost:8000/api/search?q=${encodeURIComponent(query)}`);
+        const res = await fetch(`${API_BASE}/api/search?q=${encodeURIComponent(query)}`);
         if (res.ok) {
           const data = await res.json();
           setResults(data);
@@ -95,15 +98,21 @@ export default function Navbar({ onAddMeeting }: { onAddMeeting?: () => void }) 
   const hasResults = results.meetings.length > 0 || results.segments.length > 0 || results.action_items.length > 0;
 
   return (
-    <header className="h-16 flex items-center justify-between px-8 sticky top-0 z-40 transition-all duration-300 glass"
+    <header className="h-16 flex items-center justify-between px-4 md:px-8 sticky top-0 z-40 transition-all duration-300 glass gap-2 md:gap-4"
       style={{ borderBottom: "1px solid var(--border)" }}>
-      {/* Left: Path/Workspace Name */}
-      <div className="flex items-center gap-4">
-        <h1 className="text-sm font-bold tracking-widest uppercase ff-gradient-text">Workspace Library</h1>
+      {/* Left: Hamburger & Path/Workspace Name */}
+      <div className="flex items-center gap-3">
+        <button 
+          className="md:hidden p-1.5 text-muted hover:text-foreground rounded-lg bg-muted-bg/50 cursor-pointer"
+          onClick={() => setMobileMenuOpen(true)}
+        >
+          <Menu className="w-5 h-5" />
+        </button>
+        <h1 className="text-sm font-bold tracking-widest uppercase ff-gradient-text hidden sm:block whitespace-nowrap">Workspace Library</h1>
       </div>
 
       {/* Center: Global Search Bar */}
-      <div className="flex-1 max-w-xl mx-8 relative" ref={dropdownRef}>
+      <div className="flex-1 max-w-xl md:mx-8 relative" ref={dropdownRef}>
         <div className="relative flex items-center w-full">
           <Search className="absolute left-3.5 top-2.5 h-4 w-4 text-muted" />
           <input
@@ -221,14 +230,14 @@ export default function Navbar({ onAddMeeting }: { onAddMeeting?: () => void }) 
       </div>
 
       {/* Right: Actions & User */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2 md:gap-4">
         {onAddMeeting && (
           <button
             onClick={onAddMeeting}
-            className="ff-btn flex items-center gap-2 px-5 py-2 text-sm font-bold rounded-full cursor-pointer"
+            className="ff-btn flex items-center gap-1.5 px-3 md:px-5 py-2 text-sm font-bold rounded-full cursor-pointer"
           >
-            <Plus className="w-4 h-4" />
-            <span>Create Meeting</span>
+            <Plus className="w-4 h-4 md:w-4 md:h-4" />
+            <span className="hidden sm:inline">Create Meeting</span>
           </button>
         )}
 
