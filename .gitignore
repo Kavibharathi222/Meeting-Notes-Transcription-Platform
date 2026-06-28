@@ -55,10 +55,8 @@ build/
 .eggs/
 
 # ── DATABASE FILES ───────────────────────────
-*.db
 *.sqlite
 *.sqlite3
-backend/*.db
 backend/*.sqlite
 backend/*.sqlite3
 
