@@ -1,0 +1,367 @@
+@import "tailwindcss";
+
+/* ═══════════════════════════════════════════════════════════
+   FIREFLIES.AI EXACT THEME
+   Brand Gradient: #E82A73 → #9B4AB0 → #6262DE → #3B73FF
+   Background: Deep dark navy
+   Font: Inter
+════════════════════════════════════════════════════════════ */
+
+@theme {
+  /* Fireflies Brand Gradient stops */
+  --color-ff-pink:   #E82A73;
+  --color-ff-rose:   #DE2D7A;
+  --color-ff-purple: #9B4AB0;
+  --color-ff-indigo: #6262DE;
+  --color-ff-blue:   #3B73FF;
+  
+  /* Surface palette */
+  --color-dark-bg:        #0B0A17;
+  --color-dark-surface:   #13111F;
+  --color-dark-card:      #1A1729;
+  --color-dark-elevated:  #221F33;
+  --color-dark-border:    #2D2A42;
+  --color-dark-border-2:  #3D3960;
+}
+
+/* ─── DARK THEME (DEFAULT — matches Fireflies.ai) ─────── */
+:root {
+  /* Backgrounds */
+  --background:   #0B0A17;
+  --background-2: #13111F;
+  --card:         #1A1729;
+  --card-hover:   #221F33;
+
+  /* Text */
+  --foreground:         #F0EEFF;
+  --foreground-2:       #C8C3E8;
+  --muted:              #8A85B0;
+  --muted-bg:           #221F33;
+
+  /* Borders */
+  --border:        #2D2A42;
+  --border-strong: #4A4674;
+
+  /* Fireflies Brand Gradient (exact from their SVG logo) */
+  --ff-grad: linear-gradient(135deg, #E82A73 0%, #C5388F 30%, #9B4AB0 54%, #6262DE 82%, #3B73FF 100%);
+  
+  /* Primary (using their blue) */
+  --primary:       #6262DE;
+  --primary-hover: #5050CC;
+  --primary-light: rgba(98, 98, 222, 0.15);
+  --primary-muted: rgba(98, 98, 222, 0.08);
+
+  /* Accent pink */
+  --accent:        #E82A73;
+  --accent-light:  rgba(232, 42, 115, 0.12);
+
+  /* Gradients */
+  --grad-brand:   linear-gradient(135deg, #E82A73 0%, #C5388F 30%, #9B4AB0 54%, #6262DE 82%, #3B73FF 100%);
+  --grad-btn:     linear-gradient(135deg, #E82A73 0%, #9B4AB0 50%, #3B73FF 100%);
+  --grad-sidebar: linear-gradient(180deg, #0D0B1A 0%, #0B0A17 100%);
+  --grad-card:    linear-gradient(145deg, #1E1B2E 0%, #161327 100%);
+  --grad-subtle:  linear-gradient(135deg, rgba(232,42,115,0.06) 0%, rgba(155,74,176,0.06) 50%, rgba(59,115,255,0.06) 100%);
+
+  /* Semantic */
+  --success: #34D399;
+  --warning: #FBBF24;
+  --danger:  #F87171;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.4);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.5), 0 0 1px rgba(155,74,176,0.15);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.6), 0 0 2px rgba(155,74,176,0.2);
+  --shadow-glow: 0 0 20px rgba(155,74,176,0.4), 0 0 40px rgba(98,98,222,0.2);
+  --shadow-btn: 0 4px 20px rgba(232,42,115,0.4), 0 2px 8px rgba(59,115,255,0.3);
+}
+
+/* ─── LIGHT THEME (toggled by user) ─────────────────────── */
+.light {
+  --background:   #F8F7FF;
+  --background-2: #EEEbFF;
+  --card:         #FFFFFF;
+  --card-hover:   #F5F3FF;
+
+  --foreground:         #1A1535;
+  --foreground-2:       #3D3660;
+  --muted:              #6B65A0;
+  --muted-bg:           #F0EEFF;
+
+  --border:        #DDD9F8;
+  --border-strong: #B8B0F0;
+
+  --primary:       #6262DE;
+  --primary-hover: #5050CC;
+  --primary-light: rgba(98, 98, 222, 0.1);
+  --primary-muted: rgba(98, 98, 222, 0.05);
+
+  --accent:        #E82A73;
+  --accent-light:  rgba(232, 42, 115, 0.08);
+
+  --grad-sidebar: linear-gradient(180deg, #F8F7FF 0%, #EEEbFF 100%);
+  --grad-card:    linear-gradient(145deg, #FFFFFF 0%, #F8F7FF 100%);
+  --grad-subtle:  linear-gradient(135deg, rgba(232,42,115,0.04) 0%, rgba(155,74,176,0.04) 50%, rgba(59,115,255,0.04) 100%);
+
+  --shadow-sm: 0 1px 3px rgba(98,98,222,0.08), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 16px rgba(98,98,222,0.12), 0 2px 6px rgba(0,0,0,0.06);
+  --shadow-lg: 0 8px 32px rgba(98,98,222,0.18), 0 4px 12px rgba(0,0,0,0.08);
+  --shadow-glow: 0 0 20px rgba(155,74,176,0.25);
+  --shadow-btn: 0 4px 16px rgba(232,42,115,0.3), 0 2px 8px rgba(59,115,255,0.2);
+}
+
+/* ─── BASE ────────────────────────────────────────────────── */
+html { scroll-behavior: smooth; }
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Inter font loaded via next/font/google in layout.tsx */
+
+/* ─── FIREFLIES GRADIENT UTILITIES ──────────────────────── */
+
+/* The iconic Fireflies.ai pink→purple→blue brand gradient */
+.ff-gradient-bg {
+  background: var(--grad-brand);
+}
+
+.ff-gradient-text {
+  background: var(--grad-brand);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Gradient CTA button (matches their "Get Started" button) */
+.ff-btn {
+  background: var(--grad-btn);
+  color: #fff;
+  border: none;
+  box-shadow: var(--shadow-btn);
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.ff-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0);
+  transition: background 0.2s ease;
+}
+
+.ff-btn:hover::after {
+  background: rgba(255,255,255,0.08);
+}
+
+.ff-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-glow), var(--shadow-btn);
+}
+
+.ff-btn:active {
+  transform: translateY(0);
+}
+
+/* Outline variant (matches their "Request Demo" button) */
+.ff-btn-outline {
+  background: transparent;
+  color: var(--foreground);
+  border: 1px solid var(--border-strong);
+  transition: all 0.2s ease;
+}
+
+.ff-btn-outline:hover {
+  border-color: #6262DE;
+  color: #6262DE;
+  background: var(--primary-muted);
+}
+
+/* Card with dark surface */
+.ff-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  transition: all 0.25s ease;
+}
+
+.ff-card:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+/* Glowing card (used for highlighted content) */
+.ff-card-glow:hover {
+  box-shadow: 0 4px 24px rgba(155,74,176,0.2), 0 1px 6px rgba(0,0,0,0.4);
+  border-color: rgba(155,74,176,0.3);
+}
+
+/* Sidebar bg */
+.ff-sidebar {
+  background: var(--grad-sidebar);
+  border-right: 1px solid var(--border);
+}
+
+/* Active nav item with gradient background */
+.ff-nav-active {
+  background: var(--grad-btn) !important;
+  color: white !important;
+  box-shadow: 0 2px 12px rgba(232,42,115,0.3), 0 1px 4px rgba(59,115,255,0.2);
+}
+
+/* Subtle gradient surface for sections */
+.ff-surface {
+  background: var(--grad-subtle);
+  border: 1px solid var(--border);
+}
+
+/* Input styles */
+.ff-input {
+  background: var(--muted-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--foreground);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.ff-input:focus {
+  border-color: var(--primary);
+  background: var(--card);
+  box-shadow: 0 0 0 3px rgba(98, 98, 222, 0.15);
+  outline: none;
+}
+
+/* ─── FOCUS RINGS ─────────────────────────────────────────── */
+input:focus, select:focus, textarea:focus, button:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* ─── FIREFLIES-STYLE SCROLLBAR ──────────────────────────── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #E82A73 0%, #9B4AB0 50%, #3B73FF 100%);
+  opacity: 0.4;
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  opacity: 0.7;
+}
+
+/* ─── BADGES ─────────────────────────────────────────────── */
+.ff-badge {
+  background: var(--grad-btn);
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 99px;
+  letter-spacing: 0.04em;
+}
+
+.ff-badge-outline {
+  background: transparent;
+  color: #6262DE;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 99px;
+  border: 1px solid #6262DE;
+  letter-spacing: 0.04em;
+}
+
+/* ─── ANIMATIONS ─────────────────────────────────────────── */
+@keyframes wave {
+  0%, 100% { transform: scaleY(0.3); }
+  50%       { transform: scaleY(1); }
+}
+
+@keyframes ff-shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-5px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 8px rgba(232,42,115,0.4); }
+  50%       { box-shadow: 0 0 20px rgba(155,74,176,0.7), 0 0 40px rgba(59,115,255,0.4); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes borderGlow {
+  0%, 100% { border-color: rgba(232,42,115,0.4); }
+  50%       { border-color: rgba(59,115,255,0.6); }
+}
+
+.animate-fade-in-up  { animation: fadeInUp 0.4s ease both; }
+.animate-slide-left  { animation: slideInLeft 0.35s ease both; }
+.animate-float       { animation: float 3s ease-in-out infinite; }
+.animate-pulse-glow  { animation: pulse-glow 2.5s ease-in-out infinite; }
+.animate-border-glow { animation: borderGlow 3s ease-in-out infinite; }
+
+/* Shimmer skeleton loader */
+.ff-shimmer {
+  background: linear-gradient(90deg, var(--muted-bg) 25%, var(--border) 50%, var(--muted-bg) 75%);
+  background-size: 200% 100%;
+  animation: ff-shimmer 1.6s ease-in-out infinite;
+}
+
+/* ─── WAVE BARS ──────────────────────────────────────────── */
+.wave-bar {
+  display: inline-block;
+  width: 3px;
+  height: 100%;
+  background: var(--grad-brand);
+  border-radius: 2px;
+  animation: wave 1.2s ease-in-out infinite;
+}
+.wave-bar:nth-child(2) { animation-delay: 0.1s; }
+.wave-bar:nth-child(3) { animation-delay: 0.2s; }
+.wave-bar:nth-child(4) { animation-delay: 0.3s; }
+.wave-bar:nth-child(5) { animation-delay: 0.4s; }
+
+/* ─── TRANSCRIPT ACTIVE SEGMENT ─────────────────────────── */
+.transcript-segment-active {
+  border-left: 3px solid #E82A73;
+  background: linear-gradient(90deg, rgba(232,42,115,0.07) 0%, rgba(98,98,222,0.04) 50%, transparent 100%);
+}
+
+/* ─── AUDIO PLAYER RANGE TRACK ───────────────────────────── */
+input[type="range"] {
+  accent-color: #6262DE;
+}
+
+/* ─── UTILITY ─────────────────────────────────────────────── */
+.glass {
+  background: rgba(26, 23, 41, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+.light .glass {
+  background: rgba(255,255,255,0.85);
+  border: 1px solid rgba(98,98,222,0.12);
+}
